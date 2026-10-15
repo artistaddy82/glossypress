@@ -1,0 +1,21 @@
+{
+  "name": "glossypress",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "db:migrate": "psql $DATABASE_URL -f db/schema.sql"
+  },
+  "dependencies": {
+    "next": "14.2.5",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "pg": "8.12.0"
+  },
+  "devDependencies": {
+    "eslint": "8.57.0",
+    "eslint-config-next": "14.2.5"
+  }
+}
