@@ -1,0 +1,27 @@
+import db from '../../../../lib/db'
+import { requireAdmin } from '../../../../lib/adminAuth'
+
+export default async function handler(req, res) {
+  if (!requireAdmin(req, res)) return
+
+  if (req.method === 'GET') {
+    const { magazine } = req.query
+    const { rows } = await db(
+      `SELECT * FROM articles WHERE magazine_slug=$1 ORDER BY reader_order ASC NULLS LAST, created_at DESC`,
+      [magazine]
+    )
+    return res.json(rows)
+  }
+
+  if (req.method === 'POST') {
+    const { magazine_slug, issue_id, hero_type, hero_image, hero_video_url, title, category, tags, body, is_top_story, reader_order } = req.body
+    const { rows } = await db(
+      `INSERT INTO articles (magazine_slug, issue_id, hero_type, hero_image, hero_video_url, title, category, tags, body, is_top_story, reader_order)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *`,
+      [magazine_slug, issue_id || null, hero_type || 'image', hero_image, hero_video_url, title, category, tags || [], body, is_top_story || false, reader_order || null]
+    )
+    return res.status(201).json(rows[0])
+  }
+
+  res.status(405).end()
+}
